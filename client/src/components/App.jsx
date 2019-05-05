@@ -12,7 +12,8 @@ class App extends React.Component {
       nextId: 0,
       addTitle: '',
       searchValue: '',
-      movieList: []
+      movieList: [],
+      showMovies: []
     };
 
     this.handleSearchInput = this.handleSearchInput.bind(this);
@@ -20,6 +21,9 @@ class App extends React.Component {
     this.handleAddTitleChange = this.handleAddTitleChange.bind(this);
     this.handleAddTitleSubmit = this.handleAddTitleSubmit.bind(this);
     this.handleWatchChange = this.handleWatchChange.bind(this);
+    this.displayWatched = this.displayWatched.bind(this);
+    this.displayToWatch = this.displayToWatch.bind(this);
+    this.filter = this.filter.bind(this);
   }
 
   handleSearchInput(event) {
@@ -28,15 +32,10 @@ class App extends React.Component {
 
   handleSearchSubmit(event) {
     event.preventDefault();
-
-    var filteredlist = [];
-    for (var i = 0; i < this.state.movieList.length; i++) {
-      var elem = this.state.movieList[i].title.toLowerCase();
-      if (elem.includes(this.state.searchValue.toLowerCase())) {
-        filteredlist.push(this.state.movieList[i]);
-      }
-    }
-    this.setState({ movieList: filteredlist, searchValue: '' });
+    this.setState({
+      showMovies: this.filter(this.state.movieList, this.state.searchValue),
+      searchValue: ''
+    });
   }
 
   handleAddTitleChange(event) {
@@ -48,7 +47,11 @@ class App extends React.Component {
 
     this.state.movieList.push({ id: this.state.nextId, title: this.state.addTitle, isWatched: false });
     this.state.nextId++;
-    this.setState({ movieList: this.state.movieList, addTitle: '' });
+    this.setState({
+      movieList: this.state.movieList,
+      addTitle: '',
+      showMovies: this.filter(this.state.movieList, '')
+    });
   }
 
   handleWatchChange(id) {
@@ -64,6 +67,31 @@ class App extends React.Component {
     this.setState({ movieList: this.state.movieList });
   }
 
+  filter(movieList, searchValue, isWatched) {
+    var filteredlist = [];
+    for (var i = 0; i < movieList.length; i++) {
+      var elem = movieList[i].title.toLowerCase();
+      if (!elem.includes(searchValue.toLowerCase())) {
+        continue;
+      }
+      if (isWatched === true && !movieList[i].isWatched) {
+        continue;
+      }
+      if (isWatched === false && movieList[i].isWatched) {
+        continue;
+      }
+      filteredlist.push(movieList[i]);
+    }
+    return filteredlist;
+  }
+
+  displayWatched() {
+    this.setState({ showMovies: this.filter(this.state.movieList, '', true) });
+  }
+
+  displayToWatch() {
+    this.setState({ showMovies: this.filter(this.state.movieList, '', false) });
+  }
 
   render() {
     return (
@@ -82,7 +110,10 @@ class App extends React.Component {
           onAddTitleSubmit={this.handleAddTitleSubmit}
         />
         <br />
-        <MoviesList movies={this.state.movieList} movieClickHandler={this.handleWatchChange} />
+        <button onClick={this.displayWatched}>Watched</button>
+        <button onClick={this.displayToWatch}>To Watch</button>
+        <br />
+        <MoviesList movies={this.state.showMovies} movieClickHandler={this.handleWatchChange} />
       </div>
     );
   }
