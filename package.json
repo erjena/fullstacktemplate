@@ -37,8 +37,10 @@
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "mongoose": "^5.4.22",
+    "nodemon": "^1.19.0",
     "npm": "^6.9.0",
     "react": "^16.8.6",
+    "prop-types": "^15.7.2",
     "react-dom": "^16.8.6",
     "react-fontawesome": "^1.6.1"
   },
