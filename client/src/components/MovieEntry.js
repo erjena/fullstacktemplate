@@ -1,15 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-var MovieEntry = ({ movie, movieClickHandler }) => (
+var MovieEntry = ({ movie, toggleWatched, displayMovieInfo }) => {
+    var details;
+    if (movie.showDetails === true) {
+        details = <span>
+            year: 1957
+            runtime: 107 min
+            metascore: 46
+            imbdRating: 6.2
+            <input type="checkbox" onChange={() => (toggleWatched(movie.id))} defaultChecked={movie.isWatched} />
+        </span>
+    }
+
+    return (
     <div className="singleMovie">
-        {movie.title}
-        <button onClick={() => { movieClickHandler(movie.id); }}>{movie.isWatched ? "watched" : "to watch"}</button>
+        <div onClick={() => (displayMovieInfo(movie.id))}>{movie.title}</div>
+        {details}
     </div>
-);
+    )
+};
 
 MovieEntry.propTypes = {
     movie: PropTypes.object.isRequired,
-    movieClickHandler: PropTypes.func.isRequired
+    toggleWatched: PropTypes.func.isRequired,
+    displayMovieInfo: PropTypes.func.isRequired
 };
 export default MovieEntry;

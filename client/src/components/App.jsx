@@ -23,6 +23,7 @@ class App extends React.Component {
     this.handleWatchChange = this.handleWatchChange.bind(this);
     this.displayWatched = this.displayWatched.bind(this);
     this.displayToWatch = this.displayToWatch.bind(this);
+    this.displayMovieInfo = this.displayMovieInfo.bind(this);
     this.filter = this.filter.bind(this);
   }
 
@@ -45,7 +46,12 @@ class App extends React.Component {
   handleAddTitleSubmit(event) {
     event.preventDefault();
 
-    this.state.movieList.push({ id: this.state.nextId, title: this.state.addTitle, isWatched: false });
+    this.state.movieList.push({
+      id: this.state.nextId,
+      title: this.state.addTitle,
+      isWatched: false,
+      showDetails: false
+    });
     this.state.nextId++;
     this.setState({
       movieList: this.state.movieList,
@@ -61,6 +67,19 @@ class App extends React.Component {
           this.state.movieList[i].isWatched = true;
         } else {
           this.state.movieList[i].isWatched = false;
+        }
+      }
+    }
+    this.setState({ movieList: this.state.movieList });
+  }
+
+  displayMovieInfo(id) {
+    for (var i = 0; i < this.state.movieList.length; i++) {
+      if (this.state.movieList[i].id === id) {
+        if (!this.state.movieList[i].showDetails) {
+          this.state.movieList[i].showDetails = true;
+        } else {
+          this.state.movieList[i].showDetails = false;
         }
       }
     }
@@ -113,7 +132,7 @@ class App extends React.Component {
         <button onClick={this.displayWatched}>Watched</button>
         <button onClick={this.displayToWatch}>To Watch</button>
         <br />
-        <MoviesList movies={this.state.showMovies} movieClickHandler={this.handleWatchChange} />
+        <MoviesList movies={this.state.showMovies} movieClickHandler={this.handleWatchChange} displayMovieInfo={this.displayMovieInfo}/>
       </div>
     );
   }
