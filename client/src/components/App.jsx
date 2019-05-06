@@ -50,7 +50,11 @@ class App extends React.Component {
       id: this.state.nextId,
       title: this.state.addTitle,
       isWatched: false,
-      showDetails: false
+      showDetails: false,
+      year: 1976,
+      runtime: '107 min',
+      metascore: 46,
+      imdbRating: 6.2
     });
     this.state.nextId++;
     this.setState({

@@ -5,10 +5,10 @@ var MovieEntry = ({ movie, toggleWatched, displayMovieInfo }) => {
     var details;
     if (movie.showDetails === true) {
         details = <span>
-            year: 1957
-            runtime: 107 min
-            metascore: 46
-            imbdRating: 6.2
+            year: {movie.year}
+            runtime: {movie.runtime}
+            metascore: {movie.metascore}
+            imdbRating: {movie.imdbRating}
             <input type="checkbox" onChange={() => (toggleWatched(movie.id))} defaultChecked={movie.isWatched} />
         </span>
     }
