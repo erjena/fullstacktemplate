@@ -2,7 +2,8 @@ import React from 'react';
 import MoviesList from './MoviesList.js';
 import Search from './Search.js';
 import AddMovie from './AddMovie.js';
-
+import api_key from './api_key.js';
+const jsonp = require('jsonp');
 
 class App extends React.Component {
   constructor(props) {
@@ -46,22 +47,42 @@ class App extends React.Component {
   handleAddTitleSubmit(event) {
     event.preventDefault();
 
-    this.state.movieList.push({
-      id: this.state.nextId,
-      title: this.state.addTitle,
-      isWatched: false,
-      showDetails: false,
-      year: 1976,
-      runtime: '107 min',
-      metascore: 46,
-      imdbRating: 6.2
+    jsonp(`http://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${this.state.addTitle}`, null, (err, data) => {
+      if (err) {
+        console.error('Error');
+      } else {
+        if (data.results.length === 0) {
+          console.log('Movie was not found..');
+          return;
+        } 
+        var id = data.results[0].id;
+        jsonp(`https://api.themoviedb.org/3/movie/${id}?api_key=${api_key}`, null, (err, data) => {
+          if (err) {
+            console.log('ID Error');
+          } else {
+            console.log(data);
+            this.state.movieList.push({
+              id: this.state.nextId,
+              title: data.title,
+              isWatched: false,
+              showDetails: false,
+              year: data.release_date,
+              runtime: data.runtime,
+              metascore: data.popularity,
+              imdbRating: data.vote_average
+            });
+        
+            this.state.nextId++;
+            this.setState({
+              movieList: this.state.movieList,
+              addTitle: '',
+              showMovies: this.filter(this.state.movieList, '')
+            });
+          }
+        })
+      }
     });
-    this.state.nextId++;
-    this.setState({
-      movieList: this.state.movieList,
-      addTitle: '',
-      showMovies: this.filter(this.state.movieList, '')
-    });
+
   }
 
   handleWatchChange(id) {
@@ -136,7 +157,7 @@ class App extends React.Component {
         <button onClick={this.displayWatched}>Watched</button>
         <button onClick={this.displayToWatch}>To Watch</button>
         <br />
-        <MoviesList movies={this.state.showMovies} movieClickHandler={this.handleWatchChange} displayMovieInfo={this.displayMovieInfo}/>
+        <MoviesList movies={this.state.showMovies} movieClickHandler={this.handleWatchChange} displayMovieInfo={this.displayMovieInfo} />
       </div>
     );
   }

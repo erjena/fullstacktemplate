@@ -32,3 +32,5 @@ client/dist/
 
 # jest
 *__snapshots__
+
+client/src/components/api_key.js
